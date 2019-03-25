@@ -19,18 +19,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {  // IF WE SUBMIT A FORM
         $insertFilmQuery->bindParam(':formatId', $formatID);
         $insertFilmQuery->execute();
 
-        foreach ($actors as $actor){
-            $insertFilmQuery = $dbh->prepare('INSERT INTO films VALUES(NULL,:title,:year,:formatId)');
-            
-        }
+        $last_id = ($dbh->query('SELECT LAST_INSERT_ID()')->fetchAll())[0][0];
+        echo($last_id);
+        foreach ($actors as $actor) {
 
+            try {
+                $insertActorQuery = $dbh->prepare('INSERT INTO actors VALUES(NULL,:fullName)');
+                $insertActorQuery->bindParam(':fullName', $actor);
+                $insertActorQuery->execute();
+            } catch (PDOException $exception) {
+            }
+
+            $findIdActor = $dbh->prepare('SELECT id FROM actors WHERE fullName = :fullName');
+            $findIdActor->bindParam(':fullName', $actor);
+            $findIdActor->execute();
+            $actorId = ($findIdActor->fetchAll(PDO::FETCH_COLUMN))[0];
+
+
+            $insertIntoConnectTable = $dbh->prepare('INSERT INTO movies_actors VALUES(:movie_id,:actor_id)');
+            $insertIntoConnectTable->bindParam(':movie_id', $last_id);
+            $insertIntoConnectTable->bindParam(':actor_id', $actorId);
+            $insertIntoConnectTable->execute();
+
+
+        }
         header('Location:index.php');
     }
-}
-
-else {
-    $actors=['','',''];
-}?>
+} else {
+    $actors = ['', '', ''];
+} ?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -43,7 +60,8 @@ else {
             text-align: center;
             width: 1700px;
         }
-        .actors-wrapper{
+
+        .actors-wrapper {
             width: 93%;
             display: inline;
 
@@ -70,7 +88,8 @@ else {
                     <input class="form-control input-sm" value="<?= htmlspecialchars($title) ?>" id="title" name="title"
                            type="text">
                     <h3 class="text-center"> Year </h3>
-                    <input class="form-control input-sm" value="<?= htmlspecialchars($year) ?>" id="year" name="year" type="text">
+                    <input class="form-control input-sm" value="<?= htmlspecialchars($year) ?>" id="year" name="year"
+                           type="text">
 
                     <h3 class="text-center"> Format </h3>
                     <select class="form-control" name="format">
@@ -83,7 +102,8 @@ else {
                     <div id="actors-wrappers">
                         <?php foreach ($actors as $actor): ?>
                             <div id="actor-div" class="actor-wrappers">
-                                <input class="form-control input-sm actors-wrapper" value="<?= $actor ?>" name="actors[]"
+                                <input class="form-control input-sm actors-wrapper" value="<?= $actor ?>"
+                                       name="actors[]"
                                        type="text">
                                 <button type="button" onclick="delete_row(this)">-</button>
                             </div>
@@ -95,7 +115,6 @@ else {
                     <div class="text-center" style="margin-top: 20px">
                         <button type="submit" class="btn btn-info text-center">Add film</button>
                     </div>
-
 
 
                 </form>
