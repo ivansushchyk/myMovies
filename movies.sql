@@ -49,7 +49,7 @@ DROP TABLE IF EXISTS `films`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `films` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(45) NOT NULL,
+  `title` varchar(255) NOT NULL,
   `year` int(11) NOT NULL,
   `format_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),

@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // DELETE REQUEST FROM FORM IN BOTTO
 
 $films = $dbh->query('SELECT * FROM films ORDER BY title');
 
-if (isset($_GET['search_query']) &&  strlen($_GET['search_type']) !== 0) {
+if (isset($_GET['search_query']) && strlen($_GET['search_type']) !== 0) {
 
     $searchType = $_GET['search_type'];
     $searchQuery = $_GET['search_query'];
@@ -37,7 +37,12 @@ if (isset($_GET['search_query']) &&  strlen($_GET['search_type']) !== 0) {
     }
 
 
+} else {
+
 }
+$searchQuery = '';
+$year = '';
+$title = '';
 ?>
 
 <!DOCTYPE html>
@@ -61,31 +66,34 @@ if (isset($_GET['search_query']) &&  strlen($_GET['search_type']) !== 0) {
 </nav>
 <div class="container">
     <div class="row">
-        <h4 class="text-center">Search by: </h4>
-    </div>
-    <form>
-        <div class="row">
-            <p class="text-center">
-                <label class="radio-inline">
-                    <input type="radio" name="search_type" value="movie" >Movie title
-                </label>
+        <div class="col-md-6 col-md-offset-3">
+            <h4 class="text-center">Search by: </h4>
+            <form>
+                <p class="text-center">
+                    <label class="radio-inline">
+                        <input type="radio" name="search_type" value="movie">Movie title
+                    </label>
 
-                <label class="radio-inline">
-                    <input type="radio" name="search_type" value="actor">Name actor
-                </label>
-
-            </p>
-        </div>
-        <div class="row">
-            <div class="col-md-6 col-md-offset-3">
+                    <label class="radio-inline">
+                        <input type="radio" name="search_type" value="actor">Name actor
+                    </label>
+                </p>
                 <input style="width: 80%; display: inline-block" name="search_query" type="text"
-                       value="<?= htmlspecialchars($searchQuery) ?>" class="form-control"  placeholder="Search">
+                       value="<?= htmlspecialchars($searchQuery) ?>" class="form-control" placeholder="Search">
                 <button class="btn btn-default" type="submit">
-                    <i onclick="isEmpty()" class="glyphicon glyphicon-search"></i>
+                    <i class="glyphicon glyphicon-search"></i>
                 </button>
-            </div>
+            </form>
         </div>
-    </form>
+        <div class="col-md-2 col-md-offset-1">
+            <h4>Add films from file</h4>
+            <form action="/addFilmsFromFile.php" enctype="multipart/form-data" method="post">
+                <input type="file" name="films_file">
+                <button type="submit" class="btn btn-info" style="margin-top: 5px">Submit file</button>
+            </form>
+        </div>
+    </div>
+
     <div class="row">
     </div>
 </div>
@@ -93,43 +101,42 @@ if (isset($_GET['search_query']) &&  strlen($_GET['search_type']) !== 0) {
 
 <div style="margin-top: 30px">
     <hr>
-    <?php if(!$films){?>
+    <?php if (!$films) { ?>
 
-    <h1 class="text-center"> No result for your request </h1>
+        <h1 class="text-center"> No result for your request </h1>
 
-    <?php } else {;?>
+    <?php } else {
+        ; ?>
 
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Films</th>
-            <th scope="col">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($films as $film): ?>
+        <table class="table">
+            <thead>
             <tr>
-                <th scope="row"> <?= htmlspecialchars($film['title']) . "(" . htmlspecialchars($film['year']) . ")"; ?> </th>
-                <td>
-                    <a href="/showInformation.php?film_id=<?= $film['id'] ?>" class="btn btn-primary"> Show
-                        information </a>
-                    <form class="inline-form" method="post">
-                        <input type="hidden" name="deleted_id" value="<?= $film['id'] ?>">
-                        <input type="submit" class="btn btn-danger"
-                               onclick="return confirm('Do you really want to delete this film?');" value="Delete">
-                    </form>
-                </td>
+                <th scope="col">Films</th>
+                <th scope="col">Actions</th>
             </tr>
-        <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            <?php foreach ($films as $film): ?>
+                <tr>
+                    <th scope="row"> <?= htmlspecialchars($film['title']) . "(" . $film['year'] . ")"; ?> </th>
+                    <td>
+                        <a href="/showInformation.php?film_id=<?= $film['id'] ?>" class="btn btn-primary"> Show
+                            information </a>
+                        <form class="inline-form" method="post">
+                            <input type="hidden" name="deleted_id" value="<?= $film['id'] ?>">
+                            <input type="submit" class="btn btn-danger"
+                                   onclick="return confirm('Do you really want to delete this film?');" value="Delete">
+                        </form>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
     <?php } ?>
 
 </div>
-
-
 </body>
 </html>
-    
+
 

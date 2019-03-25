@@ -9,43 +9,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {  // IF WE SUBMIT A FORM
     $year = $_POST['year'];
     $formatID = $_POST['format'];
     $actors = $_POST['actors'];
-
-
-    $validationErrors = validateFilmDate($title, $year, $actors);
+    $validationErrors = validateFilmData($dbh, $title, $year, $actors);
     if (!$validationErrors) {
-        $insertFilmQuery = $dbh->prepare('INSERT INTO films VALUES(NULL,:title,:year,:formatId)');
+        $insertFilmQuery = $dbh->prepare('INSERT INTO films (title, year, format_id) VALUES (:title,:year,:formatId)');
         $insertFilmQuery->bindParam(':title', $title);
         $insertFilmQuery->bindParam(':year', $year);
         $insertFilmQuery->bindParam(':formatId', $formatID);
         $insertFilmQuery->execute();
+        $lastId = ($dbh->query('SELECT LAST_INSERT_ID()')->fetchAll())[0][0];
 
-        $last_id = ($dbh->query('SELECT LAST_INSERT_ID()')->fetchAll())[0][0];
         foreach ($actors as $actor) {
+            $findIdActor = $dbh->prepare('SELECT id FROM actors WHERE fullName = :fullName'); // IF ACTOR IS EXIST
+            $findIdActor->bindParam(':fullName', $actor);
+            $findIdActor->execute();
+            $actorId = $findIdActor->fetch(PDO::FETCH_ASSOC)['id'];
 
-            try {
+            if (!$actorId) {
                 $insertActorQuery = $dbh->prepare('INSERT INTO actors VALUES(NULL,:fullName)');
                 $insertActorQuery->bindParam(':fullName', $actor);
                 $insertActorQuery->execute();
-            } catch (PDOException $exception) {
+
+                $getLastInsertIdQuery = $dbh->query('SELECT LAST_INSERT_ID() AS id');
+                $actorId = $getLastInsertIdQuery->fetch(PDO::FETCH_ASSOC)['id'];
             }
 
-            $findIdActor = $dbh->prepare('SELECT id FROM actors WHERE fullName = :fullName');
-            $findIdActor->bindParam(':fullName', $actor);
-            $findIdActor->execute();
-            $actorId = ($findIdActor->fetchAll(PDO::FETCH_COLUMN))[0];
-
-
             $insertIntoConnectTable = $dbh->prepare('INSERT INTO movies_actors VALUES(:movie_id,:actor_id)');
-            $insertIntoConnectTable->bindParam(':movie_id', $last_id);
+            $insertIntoConnectTable->bindParam(':movie_id', $lastId);
             $insertIntoConnectTable->bindParam(':actor_id', $actorId);
             $insertIntoConnectTable->execute();
-
-
         }
+
         header('Location:index.php');
     }
+
 } else {
+    $title = "";
     $actors = ['', '', ''];
+    $year = '';
+    $validationErrors = '';
 } ?>
 <!DOCTYPE html>
 <html>
@@ -63,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {  // IF WE SUBMIT A FORM
         .actors-wrapper {
             width: 93%;
             display: inline;
-
         }
     </style>
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {  // IF WE SUBMIT A FORM
 <body>
 <nav class="navbar navbar-default">
     <a class="navbar-brand" href="/addFilm.php">Add a film</a>
-    <a id="middle-element" class="navbar-brand active" href="/index.php"> My movies library </a>
+    <a id="middle-element" class="navbar-brand active" href="/index.php"> Main page </a>
 </nav>
 <div class="container">
     <div class="row">
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {  // IF WE SUBMIT A FORM
                     <input class="form-control input-sm" value="<?= htmlspecialchars($title) ?>" id="title" name="title"
                            type="text">
                     <h3 class="text-center"> Year </h3>
-                    <input class="form-control input-sm" value="<?= htmlspecialchars($year) ?>" id="year" name="year"
+                    <input class="form-control input-sm" value="<?= $year ?>" id="year" name="year"
                            type="text">
 
                     <h3 class="text-center"> Format </h3>
@@ -138,14 +138,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {  // IF WE SUBMIT A FORM
         div = document.getElementById('actor-div').cloneNode(true);
         var parentDiv = document.getElementById('actors-wrappers');
         parentDiv.appendChild(div);
-
         return false;
     }
 
     function delete_row(e) {
         e.parentNode.parentNode.removeChild(e.parentNode);
     }
-
-
 </script>
-
