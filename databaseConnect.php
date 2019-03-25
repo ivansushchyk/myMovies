@@ -4,11 +4,6 @@ $pass = 'root';
 $dbh = new PDO('mysql:host=localhost;dbname=movies', $user, $pass);
 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-
-
-$stmt = $dbh->query("SELECT * FROM films");
-$results = $stmt->fetch(PDO::FETCH_ASSOC);
-dd($results);
 ?>
 
 
