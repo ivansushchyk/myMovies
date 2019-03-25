@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `movies` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `movies`;
 -- MySQL dump 10.13  Distrib 5.7.25, for Linux (x86_64)
 --
 -- Host: localhost    Database: movies
@@ -29,7 +27,7 @@ CREATE TABLE `actors` (
   `fullName` varchar(45) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `fullName_UNIQUE` (`fullName`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -38,7 +36,7 @@ CREATE TABLE `actors` (
 
 LOCK TABLES `actors` WRITE;
 /*!40000 ALTER TABLE `actors` DISABLE KEYS */;
-INSERT INTO `actors` VALUES (3,'Anastasia Lopes'),(2,'Brad Pitt'),(6,'Sergei Bezrukov'),(4,'Sergei Bogrov'),(5,'Sergei Bondarchuk'),(1,'Tom Cruz');
+INSERT INTO `actors` VALUES (3,'Anastasia Lopes'),(48,'Andrey Svat'),(44,'Angelina Djoli'),(2,'Brad Pitt'),(34,'Eddgard Stark'),(50,'Ivan Federov'),(47,'Ivan Sushcyk'),(51,'My Cat'),(52,'My Dog'),(53,'My second Cat'),(49,'Sasha Belii'),(6,'Sergei Bezrukov'),(4,'Sergei Bogrov'),(5,'Sergei Bondarchuk'),(33,'Tom Cruz'),(37,'Tom Dwan');
 /*!40000 ALTER TABLE `actors` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57,7 +55,7 @@ CREATE TABLE `films` (
   PRIMARY KEY (`id`),
   KEY `folms_format_id_foreign_idx` (`format_id`),
   CONSTRAINT `folms_format_id_foreign` FOREIGN KEY (`format_id`) REFERENCES `formats` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=84 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,7 +64,7 @@ CREATE TABLE `films` (
 
 LOCK TABLES `films` WRITE;
 /*!40000 ALTER TABLE `films` DISABLE KEYS */;
-INSERT INTO `films` VALUES (4,'1+1',2003,2),(5,'From war to war',2005,3),(6,'The Brat',2002,3),(7,'2pac',2004,2),(18,'The Brat 2 ',2018,1),(19,'King Artur',2019,2),(26,'My House',2013,1),(27,'My Film',2010,1),(29,'About Kyiv',2010,1),(32,'My Film with Cat',2010,1),(33,'My Film with Cat',2010,1),(34,'My Film with Cat',2010,1),(35,'My Film with Cat',2010,1),(36,'My Film with Cat',2010,1),(37,'My Film 2',2010,1),(38,'My Film 2',2010,1),(39,'My Film 2',2010,1),(40,'My Film 2',2010,1),(41,'My Film 2',2010,1),(42,'My Film 2',2010,1),(43,'My Film 2',2010,1),(44,'My Film 2',2010,1),(45,'My Film 2',2010,1),(46,'My Film 2',2010,1),(47,'My Film 2',2010,1);
+INSERT INTO `films` VALUES (79,'The Godfather',2010,1),(80,'My Film with Cat',1999,1),(81,'My Film',2015,2),(82,'My Film with Cat',2015,1);
 /*!40000 ALTER TABLE `films` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,7 +116,7 @@ CREATE TABLE `movies_actors` (
 
 LOCK TABLES `movies_actors` WRITE;
 /*!40000 ALTER TABLE `movies_actors` DISABLE KEYS */;
-INSERT INTO `movies_actors` VALUES (6,1),(19,1),(6,2),(19,2),(4,4),(6,4),(4,5),(5,6);
+INSERT INTO `movies_actors` VALUES (79,33),(80,33),(79,37),(80,37),(79,44),(80,47),(81,48),(81,49),(81,50),(82,51),(82,52),(82,53);
 /*!40000 ALTER TABLE `movies_actors` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -139,4 +137,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-25  9:14:08
+-- Dump completed on 2019-03-25 10:57:44

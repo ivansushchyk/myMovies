@@ -131,10 +131,5 @@ if (isset($_GET['search_query']) &&  strlen($_GET['search_type']) !== 0) {
 
 </body>
 </html>
-
-<script>
-    function isEmpty()
-
-</script>
-
+    
 

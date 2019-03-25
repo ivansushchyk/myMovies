@@ -20,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {  // IF WE SUBMIT A FORM
         $insertFilmQuery->execute();
 
         $last_id = ($dbh->query('SELECT LAST_INSERT_ID()')->fetchAll())[0][0];
-        echo($last_id);
         foreach ($actors as $actor) {
 
             try {
