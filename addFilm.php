@@ -9,22 +9,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {  // IF WE SUBMIT A FORM
     $year = $_POST['year'];
     $formatID = $_POST['format'];
     $actors = $_POST['actors'];
-    $validationErrors = validateFilmDate($title, $year, $formatID);
+
+
+    $validationErrors = validateFilmDate($title, $year, $actors);
     if (!$validationErrors) {
-        $insertContactQuery = $dbh->prepare('INSERT INTO films VALUES(NULL,:title,:year,:formatId)');
-        $insertContactQuery->bindParam(':title', $title);
-        $insertContactQuery->bindParam(':year', $year);
-        $insertContactQuery->bindParam(':formatId', $formatID);
-        $insertContactQuery->execute();
+        $insertFilmQuery = $dbh->prepare('INSERT INTO films VALUES(NULL,:title,:year,:formatId)');
+        $insertFilmQuery->bindParam(':title', $title);
+        $insertFilmQuery->bindParam(':year', $year);
+        $insertFilmQuery->bindParam(':formatId', $formatID);
+        $insertFilmQuery->execute();
+
+        foreach ($actors as $actor){
+            $insertFilmQuery = $dbh->prepare('INSERT INTO films VALUES(NULL,:title,:year,:formatId)');
+            
+        }
+
         header('Location:index.php');
     }
-} else {
-    $title = '';
-    $year = '';
-    $format = '';
-    $actors = ['', '', ''];
 }
-?>
+
+else {
+    $actors=['','',''];
+}?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,7 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {  // IF WE SUBMIT A FORM
             text-align: center;
             width: 1700px;
         }
+        .actors-wrapper{
+            width: 93%;
+            display: inline;
 
+        }
     </style>
 
 </head>
@@ -68,9 +78,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {  // IF WE SUBMIT A FORM
                             <option value="<?= htmlspecialchars($format['id']) ?>"><?= htmlspecialchars($format['name']) ?></option>
                         <?php endforeach; ?>
                     </select>
+
+                    <h3 class="text-center"> Actors </h3>
+                    <div id="actors-wrappers">
+                        <?php foreach ($actors as $actor): ?>
+                            <div id="actor-div" class="actor-wrappers">
+                                <input class="form-control input-sm actors-wrapper" value="<?= $actor ?>" name="actors[]"
+                                       type="text">
+                                <button type="button" onclick="delete_row(this)">-</button>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <button type="button" id="addActorForm" onclick="addItem()">+</button>
+
                     <div class="text-center" style="margin-top: 20px">
                         <button type="submit" class="btn btn-info text-center">Add film</button>
                     </div>
+
+
+
                 </form>
 
 
@@ -86,4 +113,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {  // IF WE SUBMIT A FORM
 </div>
 </body>
 </html>
+
+<script>
+    function addItem() {
+        var div = document.createElement('div');
+        div = document.getElementById('actor-div').cloneNode(true);
+        var parentDiv = document.getElementById('actors-wrappers');
+        parentDiv.appendChild(div);
+
+        return false;
+    }
+
+    function delete_row(e) {
+        e.parentNode.parentNode.removeChild(e.parentNode);
+    }
+
+
+</script>
 

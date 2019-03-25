@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { // DELETE REQUEST FROM FORM IN BOTTO
 
 $films = $dbh->query('SELECT * FROM films ORDER BY title');
 
-if (isset($_GET['search_query']) && strlen($_GET['search_query']) !== 0 && strlen($_GET['search_type']) !== 0) {
+if (isset($_GET['search_query']) &&  strlen($_GET['search_type']) !== 0) {
 
     $searchType = $_GET['search_type'];
     $searchQuery = $_GET['search_query'];
@@ -81,7 +81,7 @@ if (isset($_GET['search_query']) && strlen($_GET['search_query']) !== 0 && strle
                 <input style="width: 80%; display: inline-block" name="search_query" type="text"
                        value="<?= htmlspecialchars($searchQuery) ?>" class="form-control"  placeholder="Search">
                 <button class="btn btn-default" type="submit">
-                    <i class="glyphicon glyphicon-search"></i>
+                    <i onclick="isEmpty()" class="glyphicon glyphicon-search"></i>
                 </button>
             </div>
         </div>
@@ -117,7 +117,7 @@ if (isset($_GET['search_query']) && strlen($_GET['search_query']) !== 0 && strle
                     <form class="inline-form" method="post">
                         <input type="hidden" name="deleted_id" value="<?= $film['id'] ?>">
                         <input type="submit" class="btn btn-danger"
-                               onclick="return confirm('Do you really want to submit the form?');" value="Delete">
+                               onclick="return confirm('Do you really want to delete this film?');" value="Delete">
                     </form>
                 </td>
             </tr>
@@ -132,5 +132,9 @@ if (isset($_GET['search_query']) && strlen($_GET['search_query']) !== 0 && strle
 </body>
 </html>
 
+<script>
+    function isEmpty()
+
+</script>
 
 
